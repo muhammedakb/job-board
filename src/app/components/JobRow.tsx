@@ -1,8 +1,12 @@
-import { faBookmark } from '@fortawesome/free-regular-svg-icons';
-// import { faBookmark as solidFaBookmark } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+'use client';
 
-export default function JobRow() {
+import type { Job } from '@/models/Job';
+import { faBookmark } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Image from 'next/image';
+import TimeAgo from 'react-timeago';
+
+export default function JobRow({ jobInfo }: { jobInfo: Job }) {
   return (
     <div className='bg-white p-4 rounded-lg shadow-sm relative'>
       <div className='absolute cursor-pointer right-4 top-4'>
@@ -10,21 +14,32 @@ export default function JobRow() {
       </div>
       <div className='flex gap-4 grow'>
         <div className='content-center'>
-          {/* TODO: will be change with <Image /> */}
-          <img
-            src='https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png'
-            className='size-12'
-          />
+          {jobInfo.jobIcon && (
+            <Image
+              alt='jobIcon'
+              src={jobInfo.jobIcon}
+              className='size-12'
+              width={1024}
+              height={1024}
+            />
+          )}
         </div>
         <div className='grow sm:flex'>
           <div className='grow'>
-            <div className='text-gray-500 text-sm'>Spotify</div>
-            <div className='font-bold text-lg mb-1'>Product Designer</div>
             <div className='text-gray-500 text-sm'>
-              Remote &middot; New York, US | Full-time
+              {jobInfo.orgName || '-'}
+            </div>
+            <div className='font-bold text-lg mb-1'>{jobInfo.title}</div>
+            <div className='text-gray-500 text-sm'>
+              {jobInfo.remote} &middot; {jobInfo.city}-{jobInfo.state},
+              {jobInfo.country} | {jobInfo.type}
             </div>
           </div>
-          <div className='content-end text-gray-500 text-sm'>2 weeks ago</div>
+          {jobInfo.createdAt && (
+            <div className='content-end text-gray-500 text-sm'>
+              <TimeAgo date={jobInfo.createdAt} />
+            </div>
+          )}
         </div>
       </div>
     </div>
