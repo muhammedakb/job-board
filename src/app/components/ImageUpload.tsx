@@ -8,15 +8,17 @@ import Image from 'next/image';
 import { ChangeEvent, useRef, useState } from 'react';
 
 export default function ImageUpload({
+  defaultValue = '',
   icon,
   name,
 }: {
+  defaultValue: string;
   icon: IconDefinition;
   name: string;
 }) {
   const fileInRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(defaultValue);
 
   async function upload(ev: ChangeEvent<HTMLInputElement>) {
     const input = ev.target as HTMLInputElement;

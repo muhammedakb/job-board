@@ -4,11 +4,18 @@ import { JobModel } from '@/models/Job';
 import mongoose from 'mongoose';
 import { revalidatePath } from 'next/cache';
 
-export async function saveJob(data: FormData) {
+export async function saveJob(formData: FormData) {
   await mongoose.connect(process.env.MONGO_URI as string);
-  const jobDoc = await JobModel.create(Object.fromEntries(data));
-  if ('orgId' in data) {
-    revalidatePath(`/jobs/${data.orgId}`);
+
+  const { id, ...jobData } = Object.fromEntries(formData);
+
+  const jobDoc = id
+    ? await JobModel.findByIdAndUpdate(id, jobData)
+    : await JobModel.create(jobData);
+
+  if ('orgId' in jobData) {
+    revalidatePath(`/jobs/${jobData.orgId}`);
   }
+
   return JSON.parse(JSON.stringify(jobDoc));
 }

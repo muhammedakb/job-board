@@ -23,15 +23,23 @@ import {
 import ImageUpload from './ImageUpload';
 import { redirect } from 'next/navigation';
 import { saveJob } from '../actions/jobActions';
+import type { Job } from '@/models/Job';
+import 'react-country-state-city/dist/react-country-state-city.css';
 
-export default function JobForm({ orgId }: { orgId: string }) {
-  const [countryId, setCountryId] = useState(0);
-  const [stateId, setStateId] = useState(0);
-  const [cityId, setCityId] = useState(0);
+export default function JobForm({
+  orgId,
+  jobDoc,
+}: {
+  orgId: string;
+  jobDoc?: Job;
+}) {
+  const [countryId, setCountryId] = useState(jobDoc?.countryId || 0);
+  const [stateId, setStateId] = useState(jobDoc?.stateId || 0);
+  const [cityId, setCityId] = useState(jobDoc?.cityId || 0);
 
-  const [countryName, setCountryName] = useState('');
-  const [stateName, setStateName] = useState('');
-  const [cityName, setCityName] = useState('');
+  const [countryName, setCountryName] = useState(jobDoc?.country || '');
+  const [stateName, setStateName] = useState(jobDoc?.state || '');
+  const [cityName, setCityName] = useState(jobDoc?.city || '');
 
   async function handleSubmit(data: FormData) {
     data.set('country', countryName.toString());
@@ -41,8 +49,8 @@ export default function JobForm({ orgId }: { orgId: string }) {
     data.set('stateId', stateId.toString());
     data.set('cityId', cityId.toString());
     data.set('orgId', orgId);
-    const jobDoc = await saveJob(data);
-    redirect(`/jobs/${jobDoc.orgId}`);
+    const jobDocument = await saveJob(data);
+    redirect(`/jobs/${jobDocument.orgId}`);
   }
 
   return (
@@ -51,12 +59,19 @@ export default function JobForm({ orgId }: { orgId: string }) {
         action={handleSubmit}
         className='container mt-6 flex flex-col gap-4'
       >
-        <TextField.Root name='title' placeholder='Job title' />
+        <TextField.Root
+          name='title'
+          placeholder='Job title'
+          defaultValue={jobDoc?.title || ''}
+        />
 
         <div className='grid sm:grid-cols-3 gap-6 *:grow'>
           <div>
             Remote?
-            <RadioGroup.Root defaultValue='hybrid' name='remote'>
+            <RadioGroup.Root
+              defaultValue={jobDoc?.remote || 'hybrid'}
+              name='remote'
+            >
               <RadioGroup.Item value='onsite'>On-site</RadioGroup.Item>
               <RadioGroup.Item value='hybrid'>Hybrid-remote</RadioGroup.Item>
               <RadioGroup.Item value='remote'>Fully remote</RadioGroup.Item>
@@ -64,7 +79,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
           </div>
           <div>
             Full time?
-            <RadioGroup.Root defaultValue='full' name='type'>
+            <RadioGroup.Root defaultValue={jobDoc?.type || 'full'} name='type'>
               <RadioGroup.Item value='project'>Project</RadioGroup.Item>
               <RadioGroup.Item value='part'>Part-time</RadioGroup.Item>
               <RadioGroup.Item value='full'>Full-time</RadioGroup.Item>
@@ -72,7 +87,11 @@ export default function JobForm({ orgId }: { orgId: string }) {
           </div>
           <div>
             Salary
-            <TextField.Root type='number' name='salary'>
+            <TextField.Root
+              type='number'
+              name='salary'
+              defaultValue={jobDoc?.salary || ''}
+            >
               <TextField.Slot>$</TextField.Slot>
               <TextField.Slot>k/year</TextField.Slot>
             </TextField.Root>
@@ -82,6 +101,9 @@ export default function JobForm({ orgId }: { orgId: string }) {
           Location
           <div className='flex flex-col sm:flex-row gap-4 *:grow'>
             <CountrySelect
+              defaultValue={
+                countryId ? { id: countryId, name: countryName } : 0
+              }
               onChange={(e: any) => {
                 setCountryId(e.id);
                 setCountryName(e.name);
@@ -89,6 +111,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
               placeHolder='Select Country'
             />
             <StateSelect
+              defaultValue={stateId ? { id: stateId, name: stateName } : 0}
               countryid={countryId}
               onChange={(e: any) => {
                 setStateId(e.id);
@@ -97,6 +120,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
               placeHolder='Select State'
             />
             <CitySelect
+              defaultValue={cityId ? { id: cityId, name: cityName } : 0}
               countryid={countryId}
               stateid={stateId}
               onChange={(e: any) => {
@@ -110,16 +134,28 @@ export default function JobForm({ orgId }: { orgId: string }) {
         <div className='sm:flex'>
           <div className='w-1/3'>
             <h3>Job icon</h3>
-            <ImageUpload name='jobIcon' icon={faStar} />
+            <ImageUpload
+              name='jobIcon'
+              icon={faStar}
+              defaultValue={jobDoc?.jobIcon || ''}
+            />
           </div>
           <div className='grow'>
             <h3>Contact person</h3>
             <div className='flex gap-2'>
               <div>
-                <ImageUpload name='contactPhoto' icon={faUser} />
+                <ImageUpload
+                  name='contactPhoto'
+                  icon={faUser}
+                  defaultValue={jobDoc?.contactPhoto || ''}
+                />
               </div>
               <div className='grow flex flex-col gap-1'>
-                <TextField.Root placeholder='John Doe' name='contactName'>
+                <TextField.Root
+                  placeholder='John Doe'
+                  name='contactName'
+                  defaultValue={jobDoc?.contactName || ''}
+                >
                   <TextField.Slot>
                     <FontAwesomeIcon icon={faUser} />
                   </TextField.Slot>
@@ -128,6 +164,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
                   placeholder='Phone'
                   type='tel'
                   name='contactPhone'
+                  defaultValue={jobDoc?.contactPhone || ''}
                 >
                   <TextField.Slot>
                     <FontAwesomeIcon icon={faPhone} />
@@ -137,6 +174,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
                   placeholder='Email'
                   type='email'
                   name='contactEmail'
+                  defaultValue={jobDoc?.contactEmail || ''}
                 >
                   <TextField.Slot>
                     <FontAwesomeIcon icon={faEnvelope} />
@@ -150,6 +188,7 @@ export default function JobForm({ orgId }: { orgId: string }) {
           placeholder='Job description'
           resize={'vertical'}
           name='description'
+          defaultValue={jobDoc?.description || ''}
         />
         <div className='flex justify-center'>
           <Button size={'3'}>

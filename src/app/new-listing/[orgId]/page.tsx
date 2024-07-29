@@ -1,8 +1,6 @@
 import { getUser } from '@workos-inc/authkit-nextjs';
 import { WorkOS } from '@workos-inc/node';
 
-import '@radix-ui/themes/styles.css';
-import 'react-country-state-city/dist/react-country-state-city.css';
 import JobForm from '@/app/components/JobForm';
 
 type PageProps = {
@@ -16,8 +14,6 @@ export default async function CompanyDetailPage({ params }: PageProps) {
   const workos = new WorkOS(process.env.WORKOS_API_KEY);
 
   if (!user) return <h1>Please log in</h1>;
-
-  console.log('params', params);
 
   const orgId = params?.orgId;
   const oms = await workos.userManagement.listOrganizationMemberships({

@@ -1,4 +1,4 @@
-import { Job } from '@/models/Job';
+import type { Job } from '@/models/Job';
 import JobRow from './JobRow';
 
 export default function Jobs({
