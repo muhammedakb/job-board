@@ -12,15 +12,7 @@ export default async function Header() {
           Job Board
         </Link>
         <nav className='flex gap-2'>
-          {!user && (
-            <Link
-              className='bg-gray-200 rounded-md py-1 px-2 sm:py-2 sm:px-4'
-              href={signInUrl}
-            >
-              Login
-            </Link>
-          )}
-          {user && (
+          {user ? (
             <form
               action={async () => {
                 'use server';
@@ -34,6 +26,13 @@ export default async function Header() {
                 Logout
               </button>
             </form>
+          ) : (
+            <Link
+              className='bg-gray-200 rounded-md py-1 px-2 sm:py-2 sm:px-4'
+              href={signInUrl}
+            >
+              Login
+            </Link>
           )}
           <Link
             className='bg-blue-600 text-white rounded-md py-1 px-2 sm:py-2 sm:px-4'

@@ -5,7 +5,7 @@ export default function Jobs({
   header,
   jobs,
 }: {
-  header: string;
+  header?: string;
   jobs: Job[];
 }) {
   return (
